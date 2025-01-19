@@ -1,19 +1,8 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-} from "lucide-react";
+import { Bot, Frame, GalleryVerticalEnd } from "lucide-react";
 
-import { NavProjects } from "@/components/chat-sidebar/nav-projects";
+import { NavFriends } from "@/components/chat-sidebar/nav-friends";
 import { NavUser } from "@/components/chat-sidebar/nav-user";
 import {
   Sidebar,
@@ -37,7 +26,7 @@ const data = {
     {
       name: "Shazam",
       url: "#",
-      icon: Frame,
+      icon: Bot,
     },
   ],
 };
@@ -63,7 +52,7 @@ export function AppSidebar({ ...props }) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavProjects friends={data.friends} />
+        <NavFriends friends={data.friends} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

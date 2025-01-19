@@ -1,4 +1,10 @@
-import { Folder, Forward, MoreHorizontal, Trash2 } from "lucide-react";
+import {
+  Folder,
+  Forward,
+  MoreHorizontal,
+  Trash2,
+  UserRoundPlus,
+} from "lucide-react";
 
 import {
   DropdownMenu,
@@ -17,12 +23,12 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-export function NavProjects({ friends }) {
+export function NavFriends({ friends }) {
   const { isMobile } = useSidebar();
 
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Projects</SidebarGroupLabel>
+    <SidebarGroup>
+      <SidebarGroupLabel>Friends</SidebarGroupLabel>
       <SidebarMenu>
         {friends.map((item) => (
           <SidebarMenuItem key={item.name}>
@@ -65,8 +71,8 @@ export function NavProjects({ friends }) {
         ))}
         <SidebarMenuItem>
           <SidebarMenuButton className="text-sidebar-foreground/70">
-            <MoreHorizontal className="text-sidebar-foreground/70" />
-            <span>More</span>
+            <UserRoundPlus className="text-sidebar-foreground/70" />
+            <span>Add Friend</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
