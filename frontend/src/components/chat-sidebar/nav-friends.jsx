@@ -23,7 +23,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-export function NavFriends({ friends }) {
+export function NavFriends({ friends, onUserSelect }) {
   const { isMobile } = useSidebar();
 
   return (
@@ -31,7 +31,13 @@ export function NavFriends({ friends }) {
       <SidebarGroupLabel>Friends</SidebarGroupLabel>
       <SidebarMenu>
         {friends.map((item) => (
-          <SidebarMenuItem key={item.name}>
+          <SidebarMenuItem
+            key={item.name}
+            onClick={() => {
+              console.log(item);
+              onUserSelect(item);
+            }}
+          >
             <SidebarMenuButton asChild>
               <a href={item.url}>
                 <item.icon />

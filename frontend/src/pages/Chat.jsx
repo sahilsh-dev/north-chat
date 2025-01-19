@@ -1,9 +1,9 @@
-import ChatSidebar from "@/components/ChatSidebar";
+import ChatLayout from "@/components/ChatLayout";
 
 export default function Chat() {
   return (
     <div>
-      <ChatSidebar />
+      <ChatLayout />
     </div>
   );
 }

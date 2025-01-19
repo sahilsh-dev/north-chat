@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { Bot, Frame, GalleryVerticalEnd } from "lucide-react";
+import { GalleryVerticalEnd } from "lucide-react";
 
 import { NavFriends } from "@/components/chat-sidebar/nav-friends";
 import { NavUser } from "@/components/chat-sidebar/nav-user";
@@ -15,25 +15,9 @@ import {
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
 
-// This is sample data.
-const data = {
-  user: {
-    name: "shazam",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  friends: [
-    {
-      name: "Shazam",
-      url: "#",
-      icon: Bot,
-    },
-  ],
-};
-
-export function AppSidebar({ ...props }) {
+export function AppSidebar({ data, onUserSelect }) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -52,7 +36,7 @@ export function AppSidebar({ ...props }) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavFriends friends={data.friends} />
+        <NavFriends friends={data.friends} onUserSelect={onUserSelect} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
