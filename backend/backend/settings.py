@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'channels'
+    'channels',
     'rest_framework',
     'drf_spectacular',
     'api',
@@ -101,8 +101,8 @@ SIMPLE_JWT = {
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'North-Chat Backend',
-    'VERSION': '0.1.1',
+    'TITLE': 'North-Chat Backend API',
+    'VERSION': '0.2.1',
 }
 
 

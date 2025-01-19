@@ -1,7 +1,9 @@
 from django.db import models
-
-from django.db import models
 from django.contrib.auth.models import User
+
+# class User(AbstractUser):
+#     image = models.ImageField(upload_to="user")
+
 
 class Room(models.Model):
     name = models.CharField(max_length=128)
@@ -11,6 +13,7 @@ class Room(models.Model):
     def __str__(self):
         return self.name
 
+
 class Message(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -19,4 +22,3 @@ class Message(models.Model):
 
     def __str__(self):
         return f"{self.user.username}: {self.content}"
-

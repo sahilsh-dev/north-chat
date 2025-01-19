@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GalleryVerticalEnd } from "lucide-react";
+import api from "@/api";
+import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/constants";
 import authPageBg from "@/assets/auth-page-bg.png";
 
 function AuthForm({ route, method }) {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -18,20 +20,21 @@ function AuthForm({ route, method }) {
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login to your account</h1>
         <p className="text-balance text-sm text-muted-foreground">
-          Enter your email below to login to your account
+          Enter your username below to login to your account
         </p>
       </div>
     ) : (
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Register your account</h1>
         <p className="text-balance text-sm text-muted-foreground">
-          Enter your email below to register your account
+          Enter your username below to register your account
         </p>
       </div>
     );
   };
 
   const handleSubmit = async (e) => {
+    console.log(route, method);
     setLoading(true);
     e.preventDefault();
     try {
@@ -56,13 +59,13 @@ function AuthForm({ route, method }) {
       {formHeading()}
       <div className="grid gap-6">
         <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="username">Username</Label>
           <Input
-            id="email"
-            type="email"
-            placeholder="m@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            id="username"
+            type="text"
+            placeholder="JohnDoe"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             required
           />
         </div>

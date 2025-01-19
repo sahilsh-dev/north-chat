@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'email']
+        fields = ['username', 'password']
 
     def create(self, validated_data):
         user = User.objects.create_user(
@@ -17,11 +17,13 @@ class UserSerializer(serializers.ModelSerializer):
         )
         return user
 
+
 class RoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = Room
         fields = ['id', 'name', 'created_at', 'created_by']
         read_only_fields = ['created_by']
+
 
 class MessageSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)

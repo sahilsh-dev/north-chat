@@ -1,5 +1,4 @@
 import { ThemeProvider } from "./components/ThemeProvider";
-import { Button } from "@/components/ui/button";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -27,9 +26,9 @@ function App() {
           <Route
             path="/chat"
             element={
-              //<ProtectedRoute>
-              <Chat />
-              //</ProtectedRoute>
+              <ProtectedRoute>
+                <Chat />
+              </ProtectedRoute>
             }
           />
           <Route path="/login" element={<Login />} />
