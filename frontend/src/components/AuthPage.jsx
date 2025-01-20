@@ -8,6 +8,7 @@ import { GalleryVerticalEnd } from "lucide-react";
 import api from "@/api";
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "@/constants";
 import authPageBg from "@/assets/auth-page-bg.png";
+import { toast } from "sonner";
 
 function AuthForm({ route, method }) {
   const [username, setUsername] = useState("");
@@ -42,13 +43,19 @@ function AuthForm({ route, method }) {
       if (method === "login") {
         localStorage.setItem(ACCESS_TOKEN, res.data.access);
         localStorage.setItem(REFRESH_TOKEN, res.data.refresh);
+        toast.success("Logged in successfully");
         navigate("/");
       } else {
         // If the user is registered, redirect to the login page
+        toast.success("Registered successfully");
         navigate("/login");
       }
     } catch (error) {
-      console.error(error);
+      if (error.status === 400 || error.status === 401) {
+        toast.error("Invalid username or password");
+      } else {
+        console.error(error);
+      }
     } finally {
       setLoading(false);
     }
@@ -63,7 +70,7 @@ function AuthForm({ route, method }) {
           <Input
             id="username"
             type="text"
-            placeholder="JohnDoe"
+            placeholder="John Doe"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
