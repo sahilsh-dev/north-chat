@@ -1,16 +1,14 @@
-from rest_framework import generics, permissions
-from rest_framework.views import APIView
+from rest_framework import views, generics, permissions, status
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from .models import Room, Message
-from .serializers import UserSerializer, RoomSerializer, MessageSerializer
-
-# Create your views here.
-class HomeView(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request):
-        return Response("Hello, world!")
+from rest_framework.permissions import IsAuthenticated
+from drf_spectacular.utils import extend_schema
+from .models import Friendship, Message, FriendRequestCode
+from .serializers import (
+    FriendRequestCodeSerializer,
+    UserSerializer,
+    AcceptFriendRequestSerializer
+)
 
 
 class RegisterView(generics.CreateAPIView):
@@ -18,24 +16,39 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
 
 
-class RoomView(generics.ListCreateAPIView):
-    queryset = Room.objects.all()
-    serializer_class = RoomSerializer
-    permission_classes = [permissions.IsAuthenticated]
+class FriendshipView(views.APIView):
+    permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
+    def get(self, request):
+        """List all friends of the current user"""
+        friends = Friendship.objects.get_friends(request.user)
+        friends = [friend.user1 if friend.user2 == request.user else friend.user2 for friend in friends]
+        serializer = UserSerializer(friends, many=True)
+        return Response(serializer.data)
 
 
-class MessageView(generics.ListCreateAPIView):
-    serializer_class = MessageSerializer
-    permission_classes = [permissions.IsAuthenticated]
+class CreateFriendRequestView(views.APIView):
+    permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        room_id = self.request.query_params.get('room', None)
-        if room_id:
-            return Message.objects.filter(room_id=room_id)
-        return Message.objects.none()
+    def post(self, request):
+        """Create a friend request code"""
+        code = FriendRequestCode.objects.create_code(request.user)
+        serializer = FriendRequestCodeSerializer(code)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+
+class AcceptFriendRequestView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        request=AcceptFriendRequestSerializer,
+        responses={200: None}
+    )
+    def post(self, request):
+        """Accept a friend request"""
+        code = request.data.get('code')
+        friend_request_code = get_object_or_404(FriendRequestCode, code=code)
+        Friendship.objects.create(user1=friend_request_code.sender, user2=request.user)
+        friend_request_code.delete()
+        return Response({'success': True})
+
