@@ -10,6 +10,11 @@ class FriendshipManager(models.Manager):
     def get_friends(self, user):
         return Friendship.objects.filter(Q(user1=user) | Q(user2=user))
 
+    def get_user_friend(self, current_user, friend):
+        return Friendship.objects.filter(
+            Q(user1=current_user, user2=friend) | Q(user1=friend, user2=current_user)
+        ).first()
+
 
 class Friendship(models.Model):
     user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user1')

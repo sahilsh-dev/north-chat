@@ -7,7 +7,8 @@ from drf_spectacular.utils import extend_schema
 from .serializers import (
     FriendRequestCodeSerializer,
     UserSerializer,
-    AcceptFriendRequestSerializer
+    AcceptFriendRequestSerializer,
+    MessageSerializer
 )
 
 
@@ -38,7 +39,7 @@ class FriendshipView(views.APIView):
 class CreateFriendRequestView(views.APIView):
     permission_classes = [IsAuthenticated]
 
-    @extend_schema(responses={201: FriendRequestCodeSerializer})
+    @extend_schema(responses=FriendRequestCodeSerializer)
     def post(self, request):
         """Create a friend request code"""
         code = FriendRequestCode.objects.create_code(request.user)
@@ -58,3 +59,19 @@ class AcceptFriendRequestView(views.APIView):
         friend_request_code.delete()
         return Response({'success': True})
 
+
+class ChatHistoryView(views.APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(responses=MessageSerializer(many=True))
+    def get(self, request, user_id):
+        """Get last messages between the current user and the user with the given id"""
+        friends = Friendship.objects.get_user_friend(request.user, user_id)
+        if not friends:
+            return Response(
+                {'error': 'You are not friends with this user'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        last_messages = friends.messages.all()[:30] # TODO: Add pagination
+        serializer = MessageSerializer(last_messages, many=True)
+        return Response(serializer.data)

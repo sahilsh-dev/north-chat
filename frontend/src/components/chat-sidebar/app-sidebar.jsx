@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "@/api";
 import { Link } from "react-router-dom";
-import { GalleryVerticalEnd } from "lucide-react";
+import { House } from "lucide-react";
 import { NavFriends } from "@/components/chat-sidebar/nav-friends";
 import { NavUser } from "@/components/chat-sidebar/nav-user";
 import {
@@ -65,7 +65,7 @@ export function AppSidebar({ onUserSelect }) {
             <SidebarMenuButton size="lg" asChild>
               <Link to="/">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <GalleryVerticalEnd className="size-4" />
+                  <House className="size-4" />
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="font-semibold">North Chat</span>

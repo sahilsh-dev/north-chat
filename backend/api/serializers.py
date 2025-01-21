@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Friendship, FriendRequestCode
+from .models import Friendship, FriendRequestCode, Message
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'password']
+        fields = ['id', 'username', 'password']
 
     def create(self, validated_data):
         user = User.objects.create_user(
@@ -34,3 +34,8 @@ class FriendRequestCodeSerializer(serializers.ModelSerializer):
 class AcceptFriendRequestSerializer(serializers.Serializer):
     code = serializers.CharField()
 
+
+class MessageSerializer(serializers.Serializer):
+    class Meta:
+        model = Message
+        fields = ['id', 'sender', 'receiver', 'content', 'created_at']
