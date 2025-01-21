@@ -61,7 +61,8 @@ function AddFriendDialogButton() {
         <DialogHeader>
           <DialogTitle>Add a friend</DialogTitle>
           <DialogDescription>
-            Enter the invite code of the friend you want to add
+            Enter the invite code of the friend you want to add. You can also
+            generate your invite code from the profile button
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleAddFriend}>
