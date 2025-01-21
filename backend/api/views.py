@@ -2,8 +2,8 @@ from rest_framework import views, generics, permissions, status
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from drf_spectacular.utils import extend_schema
 from .models import Friendship, FriendRequestCode
+from drf_spectacular.utils import extend_schema
 from .serializers import (
     FriendRequestCodeSerializer,
     UserSerializer,
@@ -38,6 +38,7 @@ class FriendshipView(views.APIView):
 class CreateFriendRequestView(views.APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(responses={201: FriendRequestCodeSerializer})
     def post(self, request):
         """Create a friend request code"""
         code = FriendRequestCode.objects.create_code(request.user)
@@ -47,8 +48,8 @@ class CreateFriendRequestView(views.APIView):
 
 class AcceptFriendRequestView(views.APIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = AcceptFriendRequestSerializer
 
+    @extend_schema(request=AcceptFriendRequestSerializer)
     def post(self, request):
         """Accept a friend request"""
         code = request.data.get('code')

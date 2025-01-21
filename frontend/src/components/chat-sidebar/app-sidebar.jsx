@@ -33,7 +33,7 @@ export function AppSidebar({ onUserSelect }) {
         const friendsData = friendsRes.data;
 
         const friends = friendsData.map((friend) => ({
-          name: friend.name,
+          name: friend.username,
           url: friend.url,
           icon: Bot,
         }));
@@ -77,7 +77,7 @@ export function AppSidebar({ onUserSelect }) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavFriends friends={sidebarData.friends} />
+        <NavFriends friends={sidebarData.friends} onUserSelect={onUserSelect} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={sidebarData.user} />

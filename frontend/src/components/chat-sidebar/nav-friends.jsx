@@ -50,7 +50,7 @@ function AddFriendDialogButton() {
   };
 
   return (
-    <Dialog isOpen={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <SidebarMenuButton className="text-sidebar-foreground/70">
           <UserRoundPlus className="text-sidebar-foreground/70" />
