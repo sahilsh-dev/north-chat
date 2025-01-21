@@ -11,6 +11,14 @@ from .serializers import (
 )
 
 
+class UserView(generics.RetrieveAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+
 class RegisterView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.AllowAny]
@@ -39,11 +47,8 @@ class CreateFriendRequestView(views.APIView):
 
 class AcceptFriendRequestView(views.APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = AcceptFriendRequestSerializer
 
-    @extend_schema(
-        request=AcceptFriendRequestSerializer,
-        responses={200: None}
-    )
     def post(self, request):
         """Accept a friend request"""
         code = request.data.get('code')

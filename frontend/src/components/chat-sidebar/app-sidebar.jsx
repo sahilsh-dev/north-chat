@@ -1,7 +1,7 @@
-import * as React from "react";
+import { useEffect, useState } from "react";
+import api from "@/api";
 import { Link } from "react-router-dom";
 import { GalleryVerticalEnd } from "lucide-react";
-
 import { NavFriends } from "@/components/chat-sidebar/nav-friends";
 import { NavUser } from "@/components/chat-sidebar/nav-user";
 import {
@@ -14,8 +14,49 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
+import { Bot } from "lucide-react";
+import { toast } from "sonner";
 
-export function AppSidebar({ data, onUserSelect }) {
+export function AppSidebar({ onUserSelect }) {
+  const [sidebarData, setSidebarData] = useState({
+    friends: [],
+    user: { name: "Loading...", email: "" },
+  });
+
+  useEffect(() => {
+    const fetchSidebarData = async () => {
+      try {
+        const userRes = await api.get("/api/users/");
+        const friendsRes = await api.get("/api/friends/");
+
+        const userData = userRes.data;
+        const friendsData = friendsRes.data;
+
+        const friends = friendsData.map((friend) => ({
+          name: friend.name,
+          url: friend.url,
+          icon: Bot,
+        }));
+
+        const data = {
+          friends: friends,
+          user: {
+            name: userData.username,
+            email: "m@example.com",
+            avatar: "/avatars/shadcn.jpg",
+          },
+        };
+
+        setSidebarData(data);
+      } catch (error) {
+        toast.error("Failed to load friends and user data");
+        console.error(error);
+      }
+    };
+
+    fetchSidebarData();
+  }, []);
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -36,10 +77,10 @@ export function AppSidebar({ data, onUserSelect }) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavFriends friends={data.friends} onUserSelect={onUserSelect} />
+        <NavFriends friends={sidebarData.friends} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={sidebarData.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

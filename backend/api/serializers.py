@@ -30,6 +30,7 @@ class FriendRequestCodeSerializer(serializers.ModelSerializer):
         model = FriendRequestCode
         fields = ['code', 'sender', 'created_at']
 
+
 class AcceptFriendRequestSerializer(serializers.Serializer):
     code = serializers.CharField()
 

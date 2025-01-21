@@ -6,27 +6,9 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Bot } from "lucide-react";
 import ChatContent from "./ChatContent";
 
 export default function ChatLayout() {
-  // This is sample data.
-  const data = {
-    user: {
-      name: "shazam",
-      email: "m@example.com",
-      avatar: "/avatars/shadcn.jpg",
-    },
-    friends: [
-      {
-        id: 1,
-        name: "Shazam",
-        url: "#",
-        icon: Bot,
-      },
-    ],
-  };
-
   // Sample messages for demo
   const mockMessages = {
     1: [
@@ -55,7 +37,7 @@ export default function ChatLayout() {
 
   return (
     <SidebarProvider>
-      <AppSidebar data={data} onUserSelect={handleUserSelect} />
+      <AppSidebar onUserSelect={handleUserSelect} />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">

@@ -35,7 +35,6 @@ function AuthForm({ route, method }) {
   };
 
   const handleSubmit = async (e) => {
-    console.log(route, method);
     setLoading(true);
     e.preventDefault();
     try {
