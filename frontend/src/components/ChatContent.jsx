@@ -12,9 +12,9 @@ export default function ChatContent({ selectedUser, messages, setMessages }) {
     if (input.trim()) {
       const newMessage = {
         id: messages.length + 1,
-        sender: "You",
+        sender_id: selectedUser.id,
         content: input.trim(),
-        timestamp: new Date().toLocaleTimeString("en-US", {
+        created_at: new Date().toLocaleTimeString("en-US", {
           hour: "numeric",
           minute: "numeric",
           hour12: true,
@@ -43,19 +43,22 @@ export default function ChatContent({ selectedUser, messages, setMessages }) {
               <div
                 key={message.id}
                 className={`mb-4 flex ${
-                  message.sender === "You" ? "justify-end" : "justify-start"
+                  message.sender_id === selectedUser.id
+                    ? "justify-end"
+                    : "justify-start"
                 }`}
               >
+                {console.log(messages)}
                 <div
                   className={`max-w-[70%] rounded-lg p-3 font-medium ${
-                    message.sender === "You"
+                    message.sender_id === selectedUser.id
                       ? "bg-blue-500 text-white"
                       : "bg-gray-500"
                   }`}
                 >
                   <p className="text-sm">{message.content}</p>
                   <span className="text-xs opacity-70">
-                    {message.timestamp}
+                    {message.created_at}
                   </span>
                 </div>
               </div>

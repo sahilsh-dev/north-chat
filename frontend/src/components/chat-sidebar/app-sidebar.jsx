@@ -33,14 +33,15 @@ export function AppSidebar({ onUserSelect }) {
         const friendsData = friendsRes.data;
 
         const friends = friendsData.map((friend) => ({
+          id: friend.id,
           name: friend.username,
-          url: friend.url,
           icon: Bot,
         }));
 
         const data = {
           friends: friends,
           user: {
+            id: userData.id,
             name: userData.username,
             email: "m@example.com",
             avatar: "/avatars/shadcn.jpg",

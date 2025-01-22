@@ -94,15 +94,14 @@ export function NavFriends({ friends, onUserSelect }) {
           <SidebarMenuItem
             key={item.name}
             onClick={() => {
-              console.log(item);
               onUserSelect(item);
             }}
           >
             <SidebarMenuButton asChild>
-              <a href={item.url}>
+              <div>
                 <item.icon />
                 <span>{item.name}</span>
-              </a>
+              </div>
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

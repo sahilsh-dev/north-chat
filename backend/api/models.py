@@ -27,7 +27,7 @@ class Friendship(models.Model):
 
     def save(self, *args, **kwargs):
         if self.user1 and self.user2 and self.user1 != self.user2:
-            self.chat_room = f'{self.user1.username}_{self.user2.username}'
+            self.chat_room = f'chat_{self.id}'
             return super().save()
 
 

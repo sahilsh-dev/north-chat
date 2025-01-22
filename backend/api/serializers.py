@@ -38,4 +38,4 @@ class AcceptFriendRequestSerializer(serializers.Serializer):
 class MessageSerializer(serializers.Serializer):
     class Meta:
         model = Message
-        fields = ['id', 'sender', 'receiver', 'content', 'created_at']
+        fields = ['id', 'sender_id', 'content', 'created_at']

@@ -7,32 +7,21 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import ChatContent from "./ChatContent";
+import api from "@/api";
+import { toast } from "sonner";
 
 export default function ChatLayout() {
-  // Sample messages for demo
-  const mockMessages = {
-    1: [
-      {
-        id: 1,
-        sender: "Bob Johnson",
-        content: "How are you?",
-        timestamp: "9:30 AM",
-      },
-      {
-        id: 2,
-        sender: "You",
-        content: "Doing great, thanks!",
-        timestamp: "9:31 AM",
-      },
-    ],
-  };
-
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
 
-  const handleUserSelect = (user) => {
+  const handleUserSelect = async (user) => {
     setSelectedUser(user);
-    setMessages(mockMessages[user.id]);
+    try {
+      const res = await api.get(`/api/chat/${user.id}/`);
+      setMessages(res.data);
+    } catch (error) {
+      toast.error("Failed to load chat messages");
+    }
   };
 
   return (
