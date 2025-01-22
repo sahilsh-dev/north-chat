@@ -1,3 +1,5 @@
+from datetime import datetime
+import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import Friendship, Message
@@ -9,14 +11,22 @@ User = get_user_model()
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.room_id = self.scope['url_route']['kwargs']['room_id']
-        self.room = await database_sync_to_async(Friendship.objects.get)(chat_room=self.room_id)
+        self.room_group_name = f'chat_{self.room_id}'
 
-        if self.scope['user'].is_anonymous and (
-            self.scope['user'] not in [self.room.user1, self.room.user2]
-        ):
+        try:
+            self.room = await database_sync_to_async(Friendship.objects.get)(id=self.room_id)
+        except:
+            print('Room not found', self.room_id)
             await self.close()
             return
-        self.room_group_name = f'chat_{self.room.chat_room}'
+
+        if self.scope['user'].is_anonymous or (
+            self.scope['user'].id not in [self.room.user1_id, self.room.user2_id]
+        ):
+            print(f'User with id:{self.scope["user"].id} - {self.scope["user"].username} ' \
+                  f'is not allowed to access room {self.room_id}')
+            await self.close()
+            return
         await self.accept()
 
         # Join room group
@@ -24,8 +34,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-        await self.send_message(f'{self.scope["user"].username} is now Online', self.scope['user'])
-
+        await self.channel_layer.group_send(
+            self.room_group_name, {
+                'type': 'chat_message',
+                'message': f'{self.scope["user"].username} is now Online',
+                'sender': self.scope['user'].username,
+            } 
+        )
 
     async def disconnect(self, close_code):
         # Leave room group
@@ -34,36 +49,38 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-    async def send_message(self, message, sender):
-        # Send message to room group
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'chat_message',
-                'message': message,
-                'sender': sender.username,
-                'timestamp': str(message.created_at)
-            }
-        )
-        await database_sync_to_async(self.room.messages.add(message))()
+    async def chat_message(self, event):
+        try:
+            message = event['message']
+            sender = event['sender']
+            created_at = str(datetime.now())
+            await self.send(text_data=json.dumps({
+                'type': 'chat',
+                'message': {
+                    'message': message,
+                    'sender': sender,
+                    'created_at': created_at,
+                }
+            }))
+        except:
+            print('Failed to send message to client')
+            return
 
+    async def receive(self, text_data):
+        try:
+            text_data_json = json.loads(text_data)
+            message = text_data_json['message']
+            sender = self.scope['user']
+            # await self.save_message(sender, message)
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    'type': 'chat_message',
+                    'message': message,
+                    'sender': sender.username,
+                }
+            )
+        except:
+            print('Error in message sent from client')
+            return
 
-    # async def receive(self, text_data):
-    #     data = json.loads(text_data)
-    #     message = data['message']
-    #     sender = self.scope["user"]
-    #     room_id = self.room_name
-    #
-    #     # Save message to database
-    #     await self.save_message(sender, room_id, message)
-    #
-    #     # Send message to room group
-    #     await self.channel_layer.group_send(
-    #         self.room_group_name,
-    #         {
-    #             'type': 'chat_message',
-    #             'message': message,
-    #             'sender': sender.username,
-    #             'timestamp': str(datetime.datetime.now())
-    #         }
-    #     )
