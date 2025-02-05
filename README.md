@@ -2,12 +2,10 @@
 
 Currently a Work In Progress, North Chat is a chat application that allows users to create chat rooms and communicate with other users in real time. The application is built using Django and Django Channels with a React frontend.
 
-## Django
-Go to the `backend` directory to check the Django task
+## Backend
+
+The backend of the application is built using Django Rest Framework and Django Channels. The backend is responsible for handling the creation of chat rooms, messages, and users. The backend also handles the WebSocket connections for the chat rooms.
 
 ## Frontend
-Go to the `frontend` directory to check the Frontend task. I used React with shadcn for a better design.
 
-## AWS
-Go to the `aws` directory to check the AWS task.
-
+The frontend of the application is built using React, Tailwind CSS and ShadCN UI. The frontend is responsible for displaying the chat rooms, messages, and users. The frontend also handles the WebSocket connections for the chat rooms.
