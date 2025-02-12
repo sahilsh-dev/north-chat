@@ -4,9 +4,30 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
+import useWebSocket from "react-use-websocket";
+import { WS_PATH } from "@/constants";
+import { ACCESS_TOKEN } from "@/constants";
 
-export default function ChatContent({ selectedUser, messages, setMessages }) {
+export default function ChatContent({
+  selectedUser,
+  messages,
+  setMessages,
+  roomId,
+}) {
   const [input, setInput] = useState("");
+  const ws_url = `${import.meta.env.VITE_API_URL}/${WS_PATH}/${roomId}/`;
+  const { sendJsonMessage, lastMessage } = useWebSocket(ws_url, {
+    onMessage: () => {
+      "Connected to Chat";
+    },
+    shouldReconnect: (e) => true,
+    share: true,
+    queryParams: { token: localStorage.getItem(ACCESS_TOKEN) },
+  });
+
+  const handleReceiveMessage = (message) => {
+    setMessages((prevMessages) => [...prevMessages, message]);
+  };
 
   const handleSend = () => {
     if (input.trim()) {
@@ -20,6 +41,7 @@ export default function ChatContent({ selectedUser, messages, setMessages }) {
           hour12: true,
         }),
       };
+      sendJsonMessage({ message: newMessage.content });
       setMessages([...messages, newMessage]);
       setInput("");
     }
@@ -44,16 +66,15 @@ export default function ChatContent({ selectedUser, messages, setMessages }) {
                 key={message.id}
                 className={`mb-4 flex ${
                   message.sender_id === selectedUser.id
-                    ? "justify-end"
-                    : "justify-start"
+                    ? "justify-start"
+                    : "justify-end"
                 }`}
               >
-                {console.log(messages)}
                 <div
                   className={`max-w-[70%] rounded-lg p-3 font-medium ${
                     message.sender_id === selectedUser.id
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-500"
+                      ? "bg-gray-500"
+                      : "bg-blue-500 text-white"
                   }`}
                 >
                   <p className="text-sm">{message.content}</p>

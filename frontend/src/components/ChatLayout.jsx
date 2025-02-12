@@ -13,12 +13,15 @@ import { toast } from "sonner";
 export default function ChatLayout() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [roomId, setRoomId] = useState(null);
 
   const handleUserSelect = async (user) => {
-    setSelectedUser(user);
     try {
+      setSelectedUser(user);
       const res = await api.get(`/api/chat/${user.id}/`);
-      setMessages(res.data);
+      setMessages(res.data.messages);
+      console.log("Messages: ", res.data);
+      setRoomId(res.data.room_id);
     } catch (error) {
       toast.error("Failed to load chat messages");
     }
@@ -40,6 +43,7 @@ export default function ChatLayout() {
             selectedUser={selectedUser}
             messages={messages}
             setMessages={setMessages}
+            roomId={roomId}
           />
         </div>
       </SidebarInset>
