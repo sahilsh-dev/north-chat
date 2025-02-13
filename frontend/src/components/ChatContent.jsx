@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
@@ -16,6 +16,11 @@ export default function ChatContent({
   roomId,
 }) {
   const [input, setInput] = useState("");
+
+  // 1. Create a ref for the bottom marker
+  const bottomRef = useRef(null);
+
+  // WebSocket setup
   const ws_url = `${import.meta.env.VITE_API_URL}/${WS_PATH}/${roomId}/`;
   const { sendJsonMessage, lastMessage } = useWebSocket(ws_url, {
     onMessage: () => {
@@ -51,15 +56,21 @@ export default function ChatContent({
     }
   };
 
+  // Handle new messages from WebSocket
   useEffect(() => {
     if (lastMessage && lastMessage.data) {
       const messageData = JSON.parse(lastMessage.data);
       setMessages((prev) => prev.concat(messageData.message));
     }
-  }, [lastMessage]);
+  }, [lastMessage, setMessages]);
+
+  // 2. Scroll to bottom when messages update
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
-    <div className="flex-1 flex flex-col h-full">
+    <div className="flex-1 flex flex-col">
       {selectedUser ? (
         <>
           {/* Chat Header */}
@@ -70,26 +81,22 @@ export default function ChatContent({
             </Avatar>
             <span className="font-medium">{selectedUser.name}</span>
           </div>
+
           {/* Messages Area */}
-          <ScrollArea className="flex-1 p-4">
+          <ScrollArea className="p-4 h-[70vh]">
             {messages.map((message) => {
+              const isSender = message.sender_id !== selectedUser.id;
               return (
                 <div
                   key={uuid()}
-                  className={`mb-4 flex ${
-                    message.sender_id === selectedUser.id
-                      ? "justify-start"
-                      : "justify-end"
-                  }`}
+                  className={`mb-4 flex ${isSender ? "justify-end" : "justify-start"}`}
                 >
                   <div
                     className={`max-w-[70%] rounded-lg p-3 font-medium ${
-                      message.sender_id === selectedUser.id
-                        ? "bg-gray-500"
-                        : "bg-blue-500 text-white"
+                      isSender ? "bg-blue-500 text-white" : "bg-gray-500"
                     }`}
                   >
-                    <p className="text-sm">{message.content}</p>
+                    <p className="max-w-80 text-wrap">{message.content}</p>
                     <span className="text-xs opacity-70">
                       {formatDate(message.created_at)}
                     </span>
@@ -97,7 +104,11 @@ export default function ChatContent({
                 </div>
               );
             })}
+            {/* 3. Bottom marker div */}
+            <div ref={bottomRef} />
+            <ScrollBar />
           </ScrollArea>
+
           {/* Message Input */}
           <div className="border-t p-4">
             <div className="flex gap-2">

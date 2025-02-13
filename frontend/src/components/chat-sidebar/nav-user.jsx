@@ -34,6 +34,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import api from "@/api";
@@ -91,14 +92,9 @@ function CreateInviteCodeButton() {
         ) : (
           <>
             <div className="grid gap-4 py-4">
-              <div className="flex items-center gap-6 justify-center mx-auto">
+              <div className="grid grid-cols-4 items-center gap-4">
                 <Label className="text-right">Invite Code</Label>
-                <input
-                  type="text"
-                  className="p-2 border rounded bg-background"
-                  value={inviteCode}
-                  readOnly
-                />
+                <Input className="col-span-3" value={inviteCode} readOnly />
               </div>
             </div>
             <DialogFooter>
