@@ -72,7 +72,5 @@ class ChatHistoryView(views.APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         last_messages = friends.messages.all()[:30] # TODO: Add pagination
-        print('Last messages: ', last_messages)
         serializer = MessageSerializer(last_messages, many=True)
-        print('Serializer data: ', serializer.data)
         return Response({'room_id': friends.id, 'messages': serializer.data})

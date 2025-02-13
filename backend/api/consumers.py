@@ -45,16 +45,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         try:
             text_data_json = json.loads(text_data)
-            message = text_data_json['message']
+            content = text_data_json['message']
             sender = self.scope['user']
-            print('Message received:', message)
+            print('Message received:', content)
             # await self.save_message(sender, message)
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'chat_message',
-                    'message': message,
-                    'sender': sender.username,
+                    'content': content,
+                    'sender_id': sender.id,
                 }
             )
         except:
@@ -63,17 +63,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def chat_message(self, event):
         try:
-            message = event['message']
-            sender = event['sender']
+            content = event['content']
+            sender_id = event['sender_id']
             created_at = str(datetime.now())
             await database_sync_to_async(Message.objects.create)(
-                sender=self.scope['user'], room=self.room, content=message
+                sender=self.scope['user'], room=self.room, content=content
             )
             await self.send(text_data=json.dumps({
                 'type': 'chat',
                 'message': {
-                    'message': message,
-                    'sender': sender,
+                    'content': content,
+                    'sender_id': sender_id,
                     'created_at': created_at,
                 }
             }))

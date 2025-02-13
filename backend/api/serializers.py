@@ -35,7 +35,7 @@ class AcceptFriendRequestSerializer(serializers.Serializer):
     code = serializers.CharField()
 
 
-class MessageSerializer(serializers.Serializer):
+class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ['id', 'sender_id', 'content', 'created_at']

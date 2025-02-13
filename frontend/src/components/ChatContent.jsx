@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { v4 as uuid } from "uuid";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -25,27 +26,37 @@ export default function ChatContent({
     queryParams: { token: localStorage.getItem(ACCESS_TOKEN) },
   });
 
-  const handleReceiveMessage = (message) => {
-    setMessages((prevMessages) => [...prevMessages, message]);
+  const formatDate = (date) => {
+    const options = {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+      month: "short",
+      day: "numeric",
+    };
+    const formattedDate = new Date(date).toLocaleString("en-US", options);
+    const [datePart, time] = formattedDate.split(", ");
+    return `${time}, ${datePart}`;
   };
 
   const handleSend = () => {
     if (input.trim()) {
       const newMessage = {
         id: messages.length + 1,
-        sender_id: selectedUser.id,
         content: input.trim(),
-        created_at: new Date().toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "numeric",
-          hour12: true,
-        }),
+        created_at: new Date().toISOString(),
       };
       sendJsonMessage({ message: newMessage.content });
-      setMessages([...messages, newMessage]);
       setInput("");
     }
   };
+
+  useEffect(() => {
+    if (lastMessage && lastMessage.data) {
+      const messageData = JSON.parse(lastMessage.data);
+      setMessages((prev) => prev.concat(messageData.message));
+    }
+  }, [lastMessage]);
 
   return (
     <div className="flex-1 flex flex-col h-full">
@@ -61,29 +72,31 @@ export default function ChatContent({
           </div>
           {/* Messages Area */}
           <ScrollArea className="flex-1 p-4">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`mb-4 flex ${
-                  message.sender_id === selectedUser.id
-                    ? "justify-start"
-                    : "justify-end"
-                }`}
-              >
+            {messages.map((message) => {
+              return (
                 <div
-                  className={`max-w-[70%] rounded-lg p-3 font-medium ${
+                  key={uuid()}
+                  className={`mb-4 flex ${
                     message.sender_id === selectedUser.id
-                      ? "bg-gray-500"
-                      : "bg-blue-500 text-white"
+                      ? "justify-start"
+                      : "justify-end"
                   }`}
                 >
-                  <p className="text-sm">{message.content}</p>
-                  <span className="text-xs opacity-70">
-                    {message.created_at}
-                  </span>
+                  <div
+                    className={`max-w-[70%] rounded-lg p-3 font-medium ${
+                      message.sender_id === selectedUser.id
+                        ? "bg-gray-500"
+                        : "bg-blue-500 text-white"
+                    }`}
+                  >
+                    <p className="text-sm">{message.content}</p>
+                    <span className="text-xs opacity-70">
+                      {formatDate(message.created_at)}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </ScrollArea>
           {/* Message Input */}
           <div className="border-t p-4">
