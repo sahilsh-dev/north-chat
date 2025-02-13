@@ -95,7 +95,7 @@ function CreateInviteCodeButton() {
                 <Label className="text-right">Invite Code</Label>
                 <input
                   type="text"
-                  className="w-1/2 p-2 border rounded bg-background"
+                  className="p-2 border rounded bg-background"
                   value={inviteCode}
                   readOnly
                 />

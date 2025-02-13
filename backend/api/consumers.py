@@ -34,13 +34,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-        await self.channel_layer.group_send(
-            self.room_group_name, {
-                'type': 'chat_message',
-                'message': f'{self.scope["user"].username} is now Online',
-                'sender': self.scope['user'].username,
-            } 
-        )
 
     async def disconnect(self, close_code):
         # Leave room group
@@ -49,38 +42,41 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.channel_name
         )
 
-    async def chat_message(self, event):
-        try:
-            message = event['message']
-            sender = event['sender']
-            created_at = str(datetime.now())
-            await self.send(text_data=json.dumps({
-                'type': 'chat',
-                'message': {
-                    'message': message,
-                    'sender': sender,
-                    'created_at': created_at,
-                }
-            }))
-        except:
-            print('Failed to send message to client')
-            return
-
     async def receive(self, text_data):
         try:
             text_data_json = json.loads(text_data)
-            message = text_data_json['message']
+            content = text_data_json['message']
             sender = self.scope['user']
+            print('Message received:', content)
             # await self.save_message(sender, message)
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'chat_message',
-                    'message': message,
-                    'sender': sender.username,
+                    'content': content,
+                    'sender_id': sender.id,
                 }
             )
         except:
             print('Error in message sent from client')
             return
 
+    async def chat_message(self, event):
+        try:
+            content = event['content']
+            sender_id = event['sender_id']
+            created_at = str(datetime.now())
+            await database_sync_to_async(Message.objects.create)(
+                sender=self.scope['user'], room=self.room, content=content
+            )
+            await self.send(text_data=json.dumps({
+                'type': 'chat',
+                'message': {
+                    'content': content,
+                    'sender_id': sender_id,
+                    'created_at': created_at,
+                }
+            }))
+        except:
+            print('Failed to send message to client')
+            return

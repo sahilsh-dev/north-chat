@@ -63,7 +63,6 @@ class AcceptFriendRequestView(views.APIView):
 class ChatHistoryView(views.APIView):
     permission_classes = [IsAuthenticated]
 
-    @extend_schema(responses=MessageSerializer(many=True))
     def get(self, request, user_id):
         """Get last messages between the current user and the user with the given id"""
         friends = Friendship.objects.get_user_friend(request.user, user_id)
@@ -74,4 +73,4 @@ class ChatHistoryView(views.APIView):
             )
         last_messages = friends.messages.all()[:30] # TODO: Add pagination
         serializer = MessageSerializer(last_messages, many=True)
-        return Response(serializer.data)
+        return Response({'room_id': friends.id, 'messages': serializer.data})
