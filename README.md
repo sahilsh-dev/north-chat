@@ -9,6 +9,8 @@ The backend of the application is built using Django Rest Framework and Django C
 ### TODO
 
 - [ ] Add online status functionality
+- [ ] Update home page
+- [ ] Dockerize the application
 - [ ] Deploy website
 
 ## Frontend
