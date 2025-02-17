@@ -83,7 +83,7 @@ export default function ChatContent({
           </div>
 
           {/* Messages Area */}
-          <ScrollArea className="p-4 h-[70vh]">
+          <ScrollArea className="p-4 h-[72vh]">
             {messages.map((message) => {
               const isSender = message.sender_id !== selectedUser.id;
               return (

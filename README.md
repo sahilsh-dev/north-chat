@@ -8,8 +8,8 @@ The backend of the application is built using Django Rest Framework and Django C
 
 ### TODO
 
-- [] Fix Add friend functionality
-- [] Add online status functionality
+- [ ] Add online status functionality
+- [ ] Deploy website
 
 ## Frontend
 

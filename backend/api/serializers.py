@@ -22,7 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
 class FrienshipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Friendship
-        fields = ['id', 'user1', 'user2', 'chat_room']
+        fields = ['id', 'user1', 'user2']
 
 
 class FriendRequestCodeSerializer(serializers.ModelSerializer):

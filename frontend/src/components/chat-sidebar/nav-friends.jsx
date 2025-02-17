@@ -71,7 +71,7 @@ function AddFriendDialogButton() {
               <Label htmlFor="code" className="text-right">
                 Code
               </Label>
-              <Input id="code" defaultValue="ABCDEF" className="col-span-3" />
+              <Input id="code" placeholder="ABCDEF" className="col-span-3" />
             </div>
           </div>
           <DialogFooter>

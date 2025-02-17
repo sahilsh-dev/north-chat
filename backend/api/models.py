@@ -19,16 +19,10 @@ class FriendshipManager(models.Manager):
 class Friendship(models.Model):
     user1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user1')
     user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user2') 
-    chat_room = models.CharField(max_length=100, blank=False, unique=True)
     objects = FriendshipManager()
 
     class Meta:
         unique_together = ['user1', 'user2']
-
-    def save(self, *args, **kwargs):
-        if self.user1 and self.user2 and self.user1 != self.user2:
-            self.chat_room = f'chat_{self.id}'
-            return super().save()
 
 
 class Message(models.Model):
