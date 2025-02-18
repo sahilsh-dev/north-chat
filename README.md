@@ -10,7 +10,7 @@ The backend of the application is built using Django Rest Framework and Django C
 
 - [ ] Add online status functionality
 - [ ] Update home page
-- [ ] Dockerize the application
+- [x] Dockerize the application
 - [ ] Deploy website
 
 ## Frontend
