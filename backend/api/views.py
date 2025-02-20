@@ -1,9 +1,9 @@
-from rest_framework import views, generics, permissions, status
 from django.shortcuts import get_object_or_404
+from rest_framework import views, generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .models import Friendship, FriendRequestCode
 from drf_spectacular.utils import extend_schema
+from .models import Friendship, FriendRequestCode
 from .serializers import (
     FriendRequestCodeSerializer,
     UserSerializer,
@@ -25,14 +25,14 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
 
 
-class FriendshipView(views.APIView):
+class UserFriendsView(views.APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        """List all friends of the current user"""
-        friends = Friendship.objects.get_friends(request.user)
-        friends = [friend.user1 if friend.user2 == request.user else friend.user2 for friend in friends]
-        serializer = UserSerializer(friends, many=True)
+        """List all friends of the current user and their online status"""
+        user_friends = Friendship.objects.get_friends(request.user)
+        user_friends = [friend.user1 if friend.user2 == request.user else friend.user2 for friend in user_friends]
+        serializer = UserSerializer(user_friends, many=True)
         return Response(serializer.data)
 
 
@@ -74,3 +74,4 @@ class ChatHistoryView(views.APIView):
         last_messages = friends.messages.all()[:30] # TODO: Add pagination
         serializer = MessageSerializer(last_messages, many=True)
         return Response({'room_id': friends.id, 'messages': serializer.data})
+

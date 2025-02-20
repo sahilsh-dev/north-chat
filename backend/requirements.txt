@@ -12,6 +12,7 @@ django-cors-headers==4.6.0
 djangorestframework==3.15.2
 djangorestframework_simplejwt==5.4.0
 drf-spectacular==0.28.0
+hiredis==3.1.0
 hyperlink==21.0.0
 idna==3.10
 incremental==24.7.2
@@ -26,6 +27,7 @@ PyJWT==2.10.1
 pyOpenSSL==25.0.0
 python-dotenv==1.0.1
 PyYAML==6.0.2
+redis==5.2.1
 referencing==0.36.1
 rpds-py==0.22.3
 service-identity==24.2.0
