@@ -4,6 +4,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import Friendship, Message
 from django.contrib.auth import get_user_model
+from .utils import set_user_online, set_user_offline
 
 User = get_user_model()
 
@@ -80,3 +81,28 @@ class ChatConsumer(AsyncWebsocketConsumer):
         except:
             print('Failed to send message to client')
             return
+
+
+class OnlineStatusConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.user = self.scope['user']
+        if self.user.is_anonymous:
+            await self.close()
+            return
+        await self.accept()
+        await self.channel_layer.group_add(
+            f'online_status_{self.user.id}',
+            self.channel_name
+        )
+        set_user_online(self.user.id)
+
+    async def receive(self, text_data):
+        console.log('Received:', text_data)
+        set_user_online(self.user.id)
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
+            f'online_status_{self.user.id}',
+            self.channel_name
+        )
+        set_user_offline(self.user.id)

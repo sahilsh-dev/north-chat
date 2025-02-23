@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { MoreHorizontal, Trash2, UserRoundPlus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { MoreHorizontal, Trash2, UserRoundPlus, Bot } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -83,8 +83,31 @@ function AddFriendDialogButton() {
   );
 }
 
-export function NavFriends({ friends, onUserSelect }) {
+export function NavFriends({ onUserSelect }) {
   const { isMobile } = useSidebar();
+  const [friends, setFriends] = useState([]);
+
+  useEffect(() => {
+    const updateFriendsData = async () => {
+      try {
+        const friendsRes = await api.get("/api/friends/");
+        const friendsData = friendsRes.data;
+        const friends = friendsData.map((friend) => ({
+          id: friend.id,
+          name: friend.username,
+          isOnline: friend.is_online,
+          icon: Bot,
+        }));
+        setFriends(friends);
+      } catch (error) {
+        toast.error("Failed to load friends data");
+        console.error(error);
+      }
+    };
+    updateFriendsData();
+    const intervalId = setInterval(updateFriendsData, 30000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <SidebarGroup>
@@ -97,9 +120,14 @@ export function NavFriends({ friends, onUserSelect }) {
               onUserSelect(item);
             }}
           >
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton asChild className="cursor-pointer">
               <div>
-                <item.icon />
+                <div className="relative">
+                  <item.icon />
+                  {item.isOnline ? (
+                    <div className="w-2 h-2 bg-green-500 rounded-full absolute top-0 right-0" />
+                  ) : null}
+                </div>
                 <span>{item.name}</span>
               </div>
             </SidebarMenuButton>

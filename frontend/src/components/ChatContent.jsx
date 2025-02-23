@@ -6,8 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
 import useWebSocket from "react-use-websocket";
-import { WS_PATH } from "@/constants";
-import { ACCESS_TOKEN } from "@/constants";
+import { ACCESS_TOKEN, WS_CHAT_PATH } from "@/constants";
 
 export default function ChatContent({
   selectedUser,
@@ -16,12 +15,10 @@ export default function ChatContent({
   roomId,
 }) {
   const [input, setInput] = useState("");
-
-  // 1. Create a ref for the bottom marker
   const bottomRef = useRef(null);
 
-  // WebSocket setup
-  const ws_url = `${import.meta.env.VITE_API_URL}/${WS_PATH}/${roomId}/`;
+  // Chat WebSocket setup
+  const ws_url = `${import.meta.env.VITE_API_URL}/${WS_CHAT_PATH}/${roomId}/`;
   const { sendJsonMessage, lastMessage } = useWebSocket(ws_url, {
     onMessage: () => {
       "Connected to Chat";

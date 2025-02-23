@@ -20,7 +20,6 @@ export default function ChatLayout() {
       setSelectedUser(user);
       const res = await api.get(`/api/chat/${user.id}/`);
       setMessages(res.data.messages);
-      console.log("Messages: ", res.data);
       setRoomId(res.data.room_id);
     } catch (error) {
       toast.error("Failed to load chat messages");

@@ -98,17 +98,18 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=60),
 }
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'North-Chat Backend API',
-    'VERSION': '0.2.1',
+    'VERSION': '0.5.0',
 }
 
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWS_CREDENTIALS = True
+USER_ONLINE_TIMEOUT = 60
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -120,6 +121,12 @@ DATABASES = {
     }
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis:6379",
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators

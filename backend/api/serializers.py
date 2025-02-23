@@ -1,14 +1,16 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from .utils import is_user_online
 from .models import Friendship, FriendRequestCode, Message
 
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    is_online = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'password']
+        fields = ['id', 'username', 'password', 'is_online']
 
     def create(self, validated_data):
         user = User.objects.create_user(
@@ -17,6 +19,9 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data['password']
         )
         return user
+
+    def get_is_online(self, obj):
+        return is_user_online(obj.id)
 
 
 class FrienshipSerializer(serializers.ModelSerializer):

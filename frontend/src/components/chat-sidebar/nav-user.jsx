@@ -109,8 +109,29 @@ function CreateInviteCodeButton() {
   );
 }
 
-export function NavUser({ user }) {
+export function NavUser() {
   const { isMobile } = useSidebar();
+  const [user, setUser] = useState({ name: "Loading...", email: "" });
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userRes = await api.get("/api/users/");
+        const userData = userRes.data;
+        const user = {
+          id: userData.id,
+          name: userData.username,
+          email: "m@example.com",
+          avatar: "/avatars/shadcn.jpg",
+        };
+        setUser(user);
+      } catch (error) {
+        toast.error("Failed to load user data");
+        console.error(error);
+      }
+    };
+    fetchUserData();
+  }, []);
 
   return (
     <SidebarMenu>
