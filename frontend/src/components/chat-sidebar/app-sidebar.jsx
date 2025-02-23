@@ -35,6 +35,7 @@ export function AppSidebar({ onUserSelect }) {
         const friends = friendsData.map((friend) => ({
           id: friend.id,
           name: friend.username,
+          isOnline: friend.is_online,
           icon: Bot,
         }));
 

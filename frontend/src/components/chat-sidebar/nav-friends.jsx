@@ -99,7 +99,12 @@ export function NavFriends({ friends, onUserSelect }) {
           >
             <SidebarMenuButton asChild>
               <div>
-                <item.icon />
+                <div className="relative">
+                  <item.icon />
+                  {item.isOnline ? (
+                    <div className="w-2 h-2 bg-green-500 rounded-full absolute top-0 right-0" />
+                  ) : null}
+                </div>
                 <span>{item.name}</span>
               </div>
             </SidebarMenuButton>
