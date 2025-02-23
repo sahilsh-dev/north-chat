@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from django.core.cache import cache
+from .utils import is_user_online
 from .models import Friendship, FriendRequestCode, Message
 
 
@@ -21,7 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
     def get_is_online(self, obj):
-        return cache.get(f'online_{obj.id}', False)
+        return is_user_online(obj.id)
 
 
 class FrienshipSerializer(serializers.ModelSerializer):

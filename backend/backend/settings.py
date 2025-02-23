@@ -103,12 +103,13 @@ SIMPLE_JWT = {
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'North-Chat Backend API',
-    'VERSION': '0.2.1',
+    'VERSION': '0.5.0',
 }
 
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWS_CREDENTIALS = True
+USER_ONLINE_TIMEOUT = 60
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
