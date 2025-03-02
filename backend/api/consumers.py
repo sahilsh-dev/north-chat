@@ -97,7 +97,7 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
         set_user_online(self.user.id)
 
     async def receive(self, text_data):
-        console.log('Received:', text_data)
+        print('Received:', text_data)
         set_user_online(self.user.id)
 
     async def disconnect(self, close_code):

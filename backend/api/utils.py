@@ -9,4 +9,4 @@ def set_user_online(user_id):
     cache.set(f'online_{user_id}', True, timeout=settings.USER_ONLINE_TIMEOUT)
 
 def set_user_offline(user_id):
-    cache.remove(f'online_{user_id}')
+    cache.delete(f'online_{user_id}')

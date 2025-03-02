@@ -55,6 +55,11 @@ class AcceptFriendRequestView(views.APIView):
         """Accept a friend request"""
         code = request.data.get('code')
         friend_request_code = get_object_or_404(FriendRequestCode, code=code)
+        if friend_request_code.sender == request.user:
+            return Response(
+                {'error': 'You cannot accept your own friend request'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         Friendship.objects.create(user1=friend_request_code.sender, user2=request.user)
         friend_request_code.delete()
         return Response({'success': True})
