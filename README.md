@@ -53,7 +53,7 @@ The frontend of the application is built using React, Tailwind CSS and ShadCN UI
 
 ## TODO
 
-- [ ] Add online status functionality
+- [x] Add online status functionality
 - [ ] Update home page
 - [x] Dockerize the application
 - [ ] Deploy website
