@@ -17,17 +17,17 @@ The frontend of the application is built using React, Tailwind CSS and ShadCN UI
 1. Navigate to the `backend` directory
 2. Create and activate virtual environment
 3. Install the dependencies
-    ```bash
-    pip install -r requirements.txt
-    ```
+   ```bash
+   pip install -r requirements.txt
+   ```
 4. Run the migrations
-    ```bash
-    python manage.py migrate
-    ```
+   ```bash
+   python manage.py migrate
+   ```
 5. Run the server
-    ```bash
-    python manage.py runserver
-    ```
+   ```bash
+   python manage.py runserver
+   ```
 6. The backend should now be running on `http://localhost:8000`
 
 ### Backend (Docker)
@@ -35,28 +35,28 @@ The frontend of the application is built using React, Tailwind CSS and ShadCN UI
 1. Navigate to the `backend` directory
 2. Make sure you have Docker Compose setup
 3. Run the following command
-    ```bash
-    docker compose up
-    ```
+   ```bash
+   docker compose up
+   ```
 
 ### Frontend
 
 1. Navigate to the `frontend` directory
 2. Install the dependencies
-    ```bash
-    npm install
-    ```
+   ```bash
+   npm install
+   ```
 3. Run the development server
-    ```bash
-    npm run dev
-    ```
+   ```bash
+   npm run dev
+   ```
 
 ## TODO
 
 - [x] Add online status functionality
 - [ ] Update home page
 - [x] Dockerize the application
-- [ ] Deploy website
+- [x] Deploy website
 
 ## Contributions
 
