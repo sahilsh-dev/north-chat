@@ -54,9 +54,11 @@ The frontend of the application is built using React, Tailwind CSS and ShadCN UI
 ## TODO
 
 - [x] Add online status functionality
-- [ ] Update home page
+- [x] Update home page
 - [x] Dockerize the application
 - [x] Deploy website
+- [ ] Add remove friend and fix refresh bug
+- [ ] Add video call feature?
 
 ## Contributions
 
