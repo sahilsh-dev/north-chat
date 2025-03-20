@@ -33,7 +33,7 @@ export default function Home() {
 						</li>
 						<li>
 							<a
-								href="https:github.com/sahilsh-dev/north-chat"
+								href="https://github.com/sahilsh-dev/north-chat"
 								className="hover:text-gray-300"
 								target="_blank"
 							>
