@@ -76,7 +76,8 @@ class ChatHistoryView(views.APIView):
                 {'error': 'You are not friends with this user'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        last_messages = friends.messages.all()[:30] # TODO: Add pagination
+        last_messages = friends.messages.all().order_by('created_at')[:30]
+        print(last_messages)
         serializer = MessageSerializer(last_messages, many=True)
         return Response({'room_id': friends.id, 'messages': serializer.data})
 
