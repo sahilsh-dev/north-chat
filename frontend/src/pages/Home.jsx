@@ -22,18 +22,22 @@ export default function Home() {
 					</div>
 					<ul className="flex space-x-6">
 						<li>
-							<Link to="/pricing" className="hover:text-gray-300">
-								Pricing
-							</Link>
-						</li>
-						<li>
-							<Link to="/features" className="hover:text-gray-300">
-								Features
+							<Link to="/about" className="hover:text-gray-300">
+								About
 							</Link>
 						</li>
 						<li>
 							<Link to="/contact" className="hover:text-gray-300">
 								Contact
+							</Link>
+						</li>
+						<li>
+							<Link
+								to="https:github.com/sahilsh-dev/north-chat"
+								className="hover:text-gray-300"
+								target="_blank"
+							>
+								Github
 							</Link>
 						</li>
 					</ul>
