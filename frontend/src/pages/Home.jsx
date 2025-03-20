@@ -32,13 +32,13 @@ export default function Home() {
 							</Link>
 						</li>
 						<li>
-							<Link
-								to="https:github.com/sahilsh-dev/north-chat"
+							<a
+								href="https:github.com/sahilsh-dev/north-chat"
 								className="hover:text-gray-300"
 								target="_blank"
 							>
 								Github
-							</Link>
+							</a>
 						</li>
 					</ul>
 				</nav>
