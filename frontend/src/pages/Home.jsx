@@ -8,10 +8,10 @@ export default function Home() {
 		<div
 			className={`relative w-full h-screen bg-black text-white overflow-hidden`}
 		>
-			<header className="absolute top-0 left-0 right-0 z-10 p-4">
+			<header className="absolute top-2 left-0 right-0 z-10 p-4">
 				<nav className="flex justify-between items-center max-w-6xl mx-auto">
 					<div className="flex items-center">
-						<div className="w-20 h-20">
+						<div className="hidden sm:block w-20 h-20">
 							<Canvas camera={{ position: [0, 0, 5] }}>
 								<ambientLight intensity={0.5} />
 								<pointLight position={[10, 10, 10]} />
@@ -43,7 +43,7 @@ export default function Home() {
 					</ul>
 				</nav>
 			</header>
-			<div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-10">
+			<div className="absolute top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-10 mt-12 sm:mt-0 px-4 w-full max-w-4xl">
 				<h1 className="text-3xl md:text-6xl font-bold mb-8 max-w-4xl mx-auto">
 					Real-Time Conversations Made Effortless
 				</h1>
