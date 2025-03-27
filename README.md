@@ -1,6 +1,6 @@
 # North Chat
 
-Currently a Work In Progress, North Chat is a chat application that allows users to create chat rooms and communicate with other users in real time. The application is built using Django and Django Channels with a React frontend.
+North Chat is a chat application that allows users to create chat rooms and communicate with other users in real time. The application is built using Django and Django Channels with a React frontend.
 
 ## Backend
 
