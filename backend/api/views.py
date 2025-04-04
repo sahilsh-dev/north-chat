@@ -77,7 +77,6 @@ class ChatHistoryView(views.APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         last_messages = friends.messages.all().order_by('created_at')[:30]
-        print(last_messages)
         serializer = MessageSerializer(last_messages, many=True)
         return Response({'room_id': friends.id, 'messages': serializer.data})
 
