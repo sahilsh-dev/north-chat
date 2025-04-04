@@ -7,11 +7,15 @@ services:
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./db.sqlite3:/app/db.sqlite3
     develop:
       watch:
         - action: sync
           path: ./
           target: /app
+          ignore:
+            - db.sqlite3
     ports:
       - "8000:8000"
     depends_on:
