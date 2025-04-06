@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { AppSidebar } from "@/components/chat-sidebar/app-sidebar";
-import { Separator } from "@/components/ui/separator";
 import {
 	SidebarInset,
 	SidebarProvider,
@@ -23,6 +22,7 @@ export default function ChatLayout() {
 			setRoomId(res.data.room_id);
 		} catch (error) {
 			toast.error("Failed to load chat messages");
+			console.error("Error fetching chat messages:", error);
 		}
 	};
 
@@ -41,12 +41,18 @@ export default function ChatLayout() {
 					</div>
 				</header>
 				<div className="flex flex-1 flex-col gap-4 p-4 pt-0 h-full">
-					<ChatContent
-						selectedUser={selectedUser}
-						messages={messages}
-						setMessages={setMessages}
-						roomId={roomId}
-					/>
+					{selectedUser && roomId ? (
+						<ChatContent
+							selectedUser={selectedUser}
+							messages={messages}
+							setMessages={setMessages}
+							roomId={roomId}
+						/>
+					) : (
+						<div className="flex-1 flex items-center justify-center text-gray-500">
+							Select a chat to start messaging
+						</div>
+					)}
 				</div>
 			</SidebarInset>
 		</SidebarProvider>

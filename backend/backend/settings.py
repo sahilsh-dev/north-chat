@@ -121,7 +121,7 @@ LOGGING = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWS_CREDENTIALS = True
-USER_ONLINE_TIMEOUT = 60
+USER_ONLINE_TIMEOUT = 20
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
