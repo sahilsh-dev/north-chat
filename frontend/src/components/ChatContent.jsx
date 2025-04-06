@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Send } from "lucide-react";
 import useWebSocket from "react-use-websocket";
 import { ACCESS_TOKEN, WS_CHAT_PATH } from "@/constants";
+import { cn } from "@/lib/utils";
 
 export default function ChatContent({
 	selectedUser,
@@ -45,7 +46,7 @@ export default function ChatContent({
 				content: input.trim(),
 				created_at: new Date().toISOString(),
 			};
-			console.log("Sending message:", input);
+			console.log("Sending message:", newMessage);
 			sendJsonMessage({ message: newMessage.content });
 			setInput("");
 		}
@@ -60,7 +61,6 @@ export default function ChatContent({
 		}
 	}, [lastMessage, setMessages]);
 
-	// 2. Scroll to bottom when messages update
 	useEffect(() => {
 		bottomRef.current?.scrollIntoView({ behavior: "smooth" });
 	}, [messages]);
@@ -85,24 +85,33 @@ export default function ChatContent({
 							return (
 								<div
 									key={uuid()}
-									className={`mb-4 flex ${
+									className={cn(
+										"mb-4 flex",
 										isSender ? "justify-end" : "justify-start"
-									}`}
+									)}
 								>
 									<div
-										className={`max-w-[70%] rounded-lg p-3 font-medium ${
+										className={cn(
+											"max-w-[70%] rounded-lg p-3 font-medium",
 											isSender ? "bg-blue-500 text-white" : "bg-gray-500"
-										}`}
+										)}
 									>
-										<p className="max-w-80 text-wrap">{message.content}</p>
-										<span className="text-xs opacity-70">
+										<p className="max-w-80 text-wrap break-words">
+											{message.content}
+										</p>
+										<span
+											className={cn(
+												"text-xs opacity-70 block",
+												isSender && "text-right"
+											)}
+										>
 											{formatDate(message.created_at)}
 										</span>
 									</div>
 								</div>
 							);
 						})}
-						{/* 3. Bottom marker div */}
+						{/* Bottom marker div */}
 						<div ref={bottomRef} />
 						<ScrollBar />
 					</ScrollArea>
