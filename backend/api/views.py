@@ -1,3 +1,4 @@
+import logging
 from django.shortcuts import get_object_or_404
 from rest_framework import views, generics, permissions, status
 from rest_framework.response import Response
@@ -10,6 +11,8 @@ from .serializers import (
     AcceptFriendRequestSerializer,
     MessageSerializer
 )
+
+logger = logging.getLogger(__name__)
 
 
 class UserView(generics.RetrieveAPIView):
@@ -34,6 +37,18 @@ class UserFriendsView(views.APIView):
         user_friends = [friend.user1 if friend.user2 == request.user else friend.user2 for friend in user_friends]
         serializer = UserSerializer(user_friends, many=True)
         return Response(serializer.data)
+    
+    def delete(self, request, friend_id):
+        """Remove a friend"""
+        friendship = Friendship.objects.get_user_friend(request.user, friend_id)
+        if friendship is None:
+            return Response(
+                {'error': 'You are not friends with this user'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        friendship.delete()
+        logger.info(f"Friendship between {request.user} and {friend_id} deleted.")
+        return Response({'success': True})
 
 
 class CreateFriendRequestView(views.APIView):

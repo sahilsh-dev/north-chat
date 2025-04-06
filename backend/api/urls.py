@@ -12,6 +12,7 @@ urlpatterns = [
     path('users/', UserView.as_view(), name='user-detail'),
     path('register/', RegisterView.as_view(), name='register-user'),
     path('friends/', UserFriendsView.as_view(), name='friends-list'),
+    path('friends/<int:friend_id>/', UserFriendsView.as_view(), name='delete-friend'),
     path('friends/create/', CreateFriendRequestView.as_view(), name='create-friend-request'),
     path('friends/accept/', AcceptFriendRequestView.as_view(), name='accept-friend-request'),
     path('chat/<int:user_id>/', ChatHistoryView.as_view(), name='chat-history')
