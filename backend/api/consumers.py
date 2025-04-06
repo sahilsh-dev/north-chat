@@ -4,6 +4,7 @@ from datetime import datetime
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from .models import Friendship, Message
 from .utils import set_user_online, set_user_offline
 
@@ -19,7 +20,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         try:
             self.room = await database_sync_to_async(Friendship.objects.get)(id=self.room_id)
         except:
-            logger.info('Room not found', self.room_id)
+            logger.info(f'Room not found {self.room_id}')
             await self.close()
             return
 
@@ -37,6 +38,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
+        logger.info(f'User with id:{self.scope["user"].id} - {self.scope["user"].username} '
+              f'joined room {self.room_id}') 
 
     async def disconnect(self, close_code):
         # Leave room group
@@ -50,7 +53,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             text_data_json = json.loads(text_data)
             content = text_data_json['message']
             sender = self.scope['user']
-            logger.info('Message received:', content)
+            logger.info(f'Message received: {content}')
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
@@ -67,17 +70,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
         try:
             content = event['content']
             sender_id = event['sender_id']
-            created_at = datetime.now()
+            created_at = timezone.now()
             await database_sync_to_async(Message.objects.create)(
                 sender=self.scope['user'], room=self.room, content=content, created_at=created_at
             )
-            logger.info('Message saved to database:', content)
+            logger.info(f'Message saved to database: {content}')
             await self.send(text_data=json.dumps({
                 'type': 'chat',
                 'message': {
                     'content': content,
                     'sender_id': sender_id,
-                    'created_at': created_at,
+                    'created_at': created_at.isoformat(),
                 }
             }))
         except:
@@ -99,7 +102,8 @@ class OnlineStatusConsumer(AsyncWebsocketConsumer):
         set_user_online(self.user.id)
 
     async def receive(self, text_data):
-        logger.info('Received:', text_data)
+        text_data_json = json.loads(text_data)
+        logger.info(f'Received: {text_data_json}')
         set_user_online(self.user.id)
 
     async def disconnect(self, close_code):
