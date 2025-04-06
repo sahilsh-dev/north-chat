@@ -52,14 +52,21 @@ class ChatConsumer(AsyncWebsocketConsumer):
         try:
             text_data_json = json.loads(text_data)
             content = text_data_json['message']
-            sender = self.scope['user']
             logger.info(f'Message received: {content}')
+
+            sender = self.scope['user']
+            created_at = timezone.now()
+            await database_sync_to_async(Message.objects.create)(
+                sender=sender, room=self.room, content=content, created_at=created_at
+            )
+            logger.info(f'Message saved to database: {content}')
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
                     'type': 'chat_message',
                     'content': content,
                     'sender_id': sender.id,
+                    'created_at': created_at,
                 }
             )
         except:
@@ -70,11 +77,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         try:
             content = event['content']
             sender_id = event['sender_id']
-            created_at = timezone.now()
-            await database_sync_to_async(Message.objects.create)(
-                sender=self.scope['user'], room=self.room, content=content, created_at=created_at
-            )
-            logger.info(f'Message saved to database: {content}')
+            created_at = event['created_at']
             await self.send(text_data=json.dumps({
                 'type': 'chat',
                 'message': {
