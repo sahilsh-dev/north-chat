@@ -17,6 +17,7 @@ export default function ChatContent({
 }) {
 	const [input, setInput] = useState("");
 	const bottomRef = useRef(null);
+	const [isFriendTyping, setFriendTyping] = useState(false);
 
 	// Chat WebSocket setup
 	const ws_url = `${import.meta.env.VITE_API_URL}/${WS_CHAT_PATH}/${roomId}/`;
@@ -25,6 +26,29 @@ export default function ChatContent({
 		share: true,
 		queryParams: { token: localStorage.getItem(ACCESS_TOKEN) },
 	});
+
+	// Handle new messages from WebSocket
+	useEffect(() => {
+		if (lastMessage && lastMessage.data) {
+			const messageData = JSON.parse(lastMessage.data);
+			console.log("Message Data", messageData);
+			if (messageData.type === "chat") {
+				console.log("New chat message received");
+				setMessages((prev) => prev.concat(messageData.message));
+				setFriendTyping(false);
+			} else if (
+				messageData.type === "typing" &&
+				messageData.sender_id == selectedUser.id
+			) {
+				console.log("Another user is typing...");
+				setFriendTyping(messageData.is_typing);
+			}
+		}
+	}, [lastMessage, setMessages]);
+
+	useEffect(() => {
+		bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+	}, [messages]);
 
 	const formatDate = (date) => {
 		const options = {
@@ -39,7 +63,7 @@ export default function ChatContent({
 		return `${time}, ${datePart}`;
 	};
 
-	const handleSend = () => {
+	const handleMessageSend = () => {
 		if (input.trim()) {
 			const newMessage = {
 				id: messages.length + 1,
@@ -47,23 +71,37 @@ export default function ChatContent({
 				created_at: new Date().toISOString(),
 			};
 			console.log("Sending message:", newMessage);
-			sendJsonMessage({ message: newMessage.content });
+			sendJsonMessage({ type: "chat", message: newMessage.content });
 			setInput("");
 		}
 	};
 
-	// Handle new messages from WebSocket
-	useEffect(() => {
-		if (lastMessage && lastMessage.data) {
-			const messageData = JSON.parse(lastMessage.data);
-			console.log("Message Data", messageData);
-			setMessages((prev) => prev.concat(messageData.message));
-		}
-	}, [lastMessage, setMessages]);
+	let typingTimerId = 0;
+	let isTypingSignalSent = false;
 
-	useEffect(() => {
-		bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-	}, [messages]);
+	const sendTypingSignal = (isTyping) => {
+		sendJsonMessage({
+			type: "typing",
+			is_typing: isTyping,
+		});
+	};
+
+	const chatMessageTypingHandler = (e) => {
+		if (e.key === "Enter") {
+			handleMessageSend();
+			clearTimeout(typingTimerId);
+			return;
+		}
+		if (!isTypingSignalSent) {
+			sendTypingSignal(true);
+			isTypingSignalSent = true;
+		}
+		clearTimeout(typingTimerId);
+		typingTimerId = setTimeout(() => {
+			sendTypingSignal(false);
+			isTypingSignalSent = false;
+		}, 3000);
+	};
 
 	return (
 		<div className="flex-1 flex flex-col">
@@ -74,6 +112,9 @@ export default function ChatContent({
 					<AvatarFallback>{selectedUser.name[0]}</AvatarFallback>
 				</Avatar>
 				<span className="font-medium">{selectedUser.name}</span>
+				{isFriendTyping && (
+					<span className="text-sm text-green-500">Typing...</span>
+				)}
 			</div>
 
 			{/* Messages Area */}
@@ -121,10 +162,10 @@ export default function ChatContent({
 						value={input}
 						onChange={(e) => setInput(e.target.value)}
 						placeholder="Type a message..."
-						onKeyPress={(e) => e.key === "Enter" && handleSend()}
+						onKeyPress={chatMessageTypingHandler}
 						className="flex-1"
 					/>
-					<Button onClick={handleSend}>
+					<Button onClick={handleMessageSend}>
 						<Send className="h-4 w-4" />
 						<span className="sr-only">Send</span>
 					</Button>

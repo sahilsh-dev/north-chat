@@ -51,24 +51,34 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         try:
             text_data_json = json.loads(text_data)
-            content = text_data_json['message']
-            logger.info(f'Message received: {content}')
-
+            logger.info(f'Message received: {text_data_json}')
+            msg_type = text_data_json['type']
             sender = self.scope['user']
-            created_at = timezone.now()
-            await database_sync_to_async(Message.objects.create)(
-                sender=sender, room=self.room, content=content, created_at=created_at
-            )
-            logger.info(f'Message saved to database: {content}')
-            await self.channel_layer.group_send(
-                self.room_group_name,
-                {
-                    'type': 'chat_message',
-                    'content': content,
-                    'sender_id': sender.id,
-                    'created_at': created_at,
-                }
-            )
+            if msg_type == 'chat':
+                content = text_data_json['message']
+                created_at = timezone.now()
+                await database_sync_to_async(Message.objects.create)(
+                    sender=sender, room=self.room, content=content, created_at=created_at
+                )
+                logger.info(f'Message saved to database: {content}')
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'chat_message',
+                        'content': content,
+                        'sender_id': sender.id,
+                        'created_at': created_at,
+                    }
+                )
+            elif msg_type == 'typing':
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'typing_message',
+                        'sender_id': sender.id,
+                        'is_typing': text_data_json['is_typing'],
+                    }
+                )
         except:
             logger.info('Error in message sent from client')
             return
@@ -78,6 +88,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             content = event['content']
             sender_id = event['sender_id']
             created_at = event['created_at']
+            logger.info(f'Sending message to client: {content}')
             await self.send(text_data=json.dumps({
                 'type': 'chat',
                 'message': {
@@ -88,6 +99,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }))
         except:
             logger.info('Failed to send message to client')
+            return
+
+    async def typing_message(self, event):
+        sender_id = event['sender_id']
+        is_typing = event['is_typing']
+        try:
+            await self.send(text_data=json.dumps({
+                'type': 'typing',
+                'sender_id': sender_id,
+                'is_typing': is_typing
+            }))
+        except:
+            logger.info('Failed to send typing message to client')
             return
 
 
