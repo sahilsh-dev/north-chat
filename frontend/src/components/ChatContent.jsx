@@ -16,10 +16,11 @@ export default function ChatContent({
 	roomId,
 }) {
 	const [input, setInput] = useState("");
-	const bottomRef = useRef(null);
 	const [isFriendTyping, setFriendTyping] = useState(false);
+	const bottomRef = useRef(null);
 	const typingTimerRef = useRef(null);
 	const isTypingRef = useRef(false);
+	const friendTypingTimeoutRef = useRef(null);
 
 	// Chat WebSocket setup
 	const ws_url = `${import.meta.env.VITE_API_URL}/${WS_CHAT_PATH}/${roomId}/`;
@@ -36,13 +37,15 @@ export default function ChatContent({
 			console.log("Message Data", messageData);
 			if (messageData.type === "chat") {
 				setMessages((prev) => prev.concat(messageData.message));
-				setFriendTyping(false);
 			} else if (
 				messageData.type === "typing" &&
 				messageData.sender_id == selectedUser.id
 			) {
-				console.log("Another user is typing...");
 				setFriendTyping(messageData.is_typing);
+				clearTimeout(friendTypingTimeoutRef.current);
+				friendTypingTimeoutRef.current = setTimeout(() => {
+					setFriendTyping(false);
+				}, 2000);
 			}
 		}
 	}, [lastMessage, setMessages]);
