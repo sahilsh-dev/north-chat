@@ -18,6 +18,8 @@ export default function ChatContent({
 	const [input, setInput] = useState("");
 	const bottomRef = useRef(null);
 	const [isFriendTyping, setFriendTyping] = useState(false);
+	const typingTimerRef = useRef(null);
+	const isTypingRef = useRef(false);
 
 	// Chat WebSocket setup
 	const ws_url = `${import.meta.env.VITE_API_URL}/${WS_CHAT_PATH}/${roomId}/`;
@@ -33,7 +35,6 @@ export default function ChatContent({
 			const messageData = JSON.parse(lastMessage.data);
 			console.log("Message Data", messageData);
 			if (messageData.type === "chat") {
-				console.log("New chat message received");
 				setMessages((prev) => prev.concat(messageData.message));
 				setFriendTyping(false);
 			} else if (
@@ -76,31 +77,31 @@ export default function ChatContent({
 		}
 	};
 
-	let typingTimerId = 0;
-	let isTypingSignalSent = false;
-
 	const sendTypingSignal = (isTyping) => {
 		sendJsonMessage({
 			type: "typing",
 			is_typing: isTyping,
 		});
+		isTypingRef.current = isTyping;
 	};
 
-	const chatMessageTypingHandler = (e) => {
-		if (e.key === "Enter") {
-			handleMessageSend();
-			clearTimeout(typingTimerId);
-			return;
-		}
-		if (!isTypingSignalSent) {
-			sendTypingSignal(true);
-			isTypingSignalSent = true;
-		}
-		clearTimeout(typingTimerId);
-		typingTimerId = setTimeout(() => {
+	const handleInputFocus = () => {
+		sendTypingSignal(true);
+		clearInterval(typingTimerRef.current);
+		typingTimerRef.current = setInterval(() => {
+			if (document.activeElement === document.getElementById("chat-input")) {
+				sendTypingSignal(true);
+			} else {
+				handleInputBlur();
+			}
+		}, 2000);
+	};
+
+	const handleInputBlur = () => {
+		clearInterval(typingTimerRef.current);
+		if (isTypingRef.current === true) {
 			sendTypingSignal(false);
-			isTypingSignalSent = false;
-		}, 3000);
+		}
 	};
 
 	return (
@@ -159,10 +160,13 @@ export default function ChatContent({
 			<div className="border-t p-4">
 				<div className="flex gap-2">
 					<Input
+						id="chat-input"
 						value={input}
 						onChange={(e) => setInput(e.target.value)}
 						placeholder="Type a message..."
-						onKeyPress={chatMessageTypingHandler}
+						onKeyDown={(e) => e.key === "Enter" && handleMessageSend()}
+						onFocus={handleInputFocus}
+						onBlur={handleInputBlur}
 						className="flex-1"
 					/>
 					<Button onClick={handleMessageSend}>
