@@ -58,6 +58,7 @@ The frontend of the application is built using React, Tailwind CSS and ShadCN UI
 - [x] Dockerize the application
 - [x] Deploy website
 - [x] Add remove friend and fix refresh bug
+- [ ] Add social login
 - [ ] Add video call feature?
 
 ## Contributions
