@@ -1,22 +1,29 @@
 services:
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST: db
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - db
+
   redis:
     image: redis:alpine
     ports:
       - "6379:6379"
 
-  web:
-    build: .
-    command: python manage.py runserver 0.0.0.0:8000
-    volumes:
-      - ./db.sqlite3:/app/db.sqlite3
-    develop:
-      watch:
-        - action: sync
-          path: ./
-          target: /app
-          ignore:
-            - db.sqlite3
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
-      - "8000:8000"
-    depends_on:
-      - redis
+      - "5432:5432"
+    restart: unless-stopped
