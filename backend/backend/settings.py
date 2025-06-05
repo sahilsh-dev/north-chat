@@ -47,6 +47,13 @@ INSTALLED_APPS = [
     "corsheaders",
     "channels",
     "rest_framework",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.dummy",
+    "allauth.socialaccount.providers.google",
+    "allauth.headless",
+    "allauth.usersessions",
     "drf_spectacular",
     "api",
 ]
@@ -60,6 +67,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "backend.urls"
@@ -101,7 +109,7 @@ SIMPLE_JWT = {
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "North-Chat Backend API",
-    "VERSION": "1.0.0",
+    "VERSION": "1.1.0",
 }
 
 LOGGING = {
@@ -126,8 +134,18 @@ USER_ONLINE_TIMEOUT = 20
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# Database configuration
+DB_USER = os.getenv('POSTGRES_USER', 'postgres')
+DB_PASS = os.getenv('POSTGRES_PASSWORD', 'postgres')
+DB_HOST = os.getenv('POSTGRES_HOST', 'localhost')
+DB_PORT = os.getenv('POSTGRES_PORT', '5432')
+DB_NAME = os.getenv('POSTGRES_DB', 'postgres')
+
 DATABASES = {
-    "default": dj_database_url.config(default="sqlite:///db.sqlite3", conn_max_age=600)
+    "default": dj_database_url.config(
+        default=f"postgres://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}",
+        conn_max_age=600,
+    )
 }
 
 CACHES = {
@@ -177,3 +195,31 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Oauth2 settings
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        "APP": {
+            "client_id": "123", 
+            "secret": "456", 
+            "key": ""
+        }
+    }
+}
+
+AUTHENTICATION_BACKENDS = [
+    "rest_framework_simplejwt.authentication.JWTAuthentication",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+HEADLESS_ONLY = True
+HEADLESS_FRONTEND_URLS = {
+    "account_confirm_email": "/account/verify-email/{key}",
+    "account_reset_password": "/account/password/reset",
+    "account_reset_password_from_key": "/account/password/reset/key/{key}",
+    "account_signup": "/account/signup",
+    "socialaccount_login_error": "/account/provider/callback",
+}

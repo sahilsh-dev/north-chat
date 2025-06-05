@@ -3,10 +3,10 @@ services:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_HOST: db
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=db
     ports:
       - "8000:8000"
     depends_on:
@@ -21,9 +21,14 @@ services:
   db:
     image: postgres:17
     environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     ports:
       - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
     restart: unless-stopped
+
+volumes:
+  db_data:
