@@ -50,10 +50,8 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
-    "allauth.socialaccount.providers.dummy",
     "allauth.socialaccount.providers.google",
     "allauth.headless",
-    "allauth.usersessions",
     "drf_spectacular",
     "api",
 ]
@@ -216,22 +214,30 @@ SOCIALACCOUNT_PROVIDERS = {
         # (``socialaccount`` app) containing the required client
         # credentials, or list them here:
         "APP": {
-            "client_id": "123", 
-            "secret": "456", 
-            "key": ""
+            "client_id": os.getenv("GOOGLE_CLIENT_ID"),
+            "secret": os.getenv("GOOGLE_CLIENT_SECRET"),
+            "key": "",
+            "settings": {
+                "scope": [
+                    "profile",
+                    "email",
+                ],
+            }
         }
     }
 }
 
 AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
 
 HEADLESS_ONLY = True
+FRONTEND_BASE_URL = os.getenv("FRONTEND_BASE_URL", "http://localhost:3000")
 HEADLESS_FRONTEND_URLS = {
-    "account_confirm_email": "/account/verify-email/{key}",
-    "account_reset_password": "/account/password/reset",
-    "account_reset_password_from_key": "/account/password/reset/key/{key}",
-    "account_signup": "/account/signup",
-    "socialaccount_login_error": "/account/provider/callback",
+    "account_confirm_email": f"{FRONTEND_BASE_URL}/account/verify-email/{{key}}",
+    "account_reset_password": f"{FRONTEND_BASE_URL}/account/password/reset",
+    "account_reset_password_from_key": f"{FRONTEND_BASE_URL}/account/password/reset/key/{{key}}",
+    "account_signup": f"{FRONTEND_BASE_URL}/account/signup",
+    "socialaccount_login_error": f"{FRONTEND_BASE_URL}/account/provider/callback",
 }
