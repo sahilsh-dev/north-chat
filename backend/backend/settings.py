@@ -49,9 +49,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "allauth",
     "allauth.account",
+    "allauth.headless",
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
-    "allauth.headless",
     "drf_spectacular",
     "api",
 ]
@@ -124,21 +124,8 @@ LOGGING = {
     },
 }
 
-
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWS_CREDENTIALS = True
-
-# CSRF Configuration
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
-
-# Additional CSRF settings for frontend integration
-CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
-CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to read CSRF token
-CSRF_COOKIE_SAMESITE = 'Lax'
-CSRF_USE_SESSIONS = False
 
 USER_ONLINE_TIMEOUT = 20
 
@@ -209,21 +196,24 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Oauth2 settings
 SOCIALACCOUNT_PROVIDERS = {
-    "google": {
-        # For each OAuth based provider, either add a ``SocialApp``
-        # (``socialaccount`` app) containing the required client
-        # credentials, or list them here:
-        "APP": {
-            "client_id": os.getenv("GOOGLE_CLIENT_ID"),
-            "secret": os.getenv("GOOGLE_CLIENT_SECRET"),
-            "key": "",
-            "settings": {
-                "scope": [
-                    "profile",
-                    "email",
-                ],
-            }
-        }
+    'google': {
+        'APPS': [
+            {
+                'client_id': os.getenv('GOOGLE_CLIENT_ID'),
+                'secret': os.getenv('GOOGLE_CLIENT_SECRET'),
+                'key': '',
+                'settings': {
+                    'scope': [
+                        'profile',
+                        'email',
+                    ],
+                },
+            },
+        ],
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
     }
 }
 

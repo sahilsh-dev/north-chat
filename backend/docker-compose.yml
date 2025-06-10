@@ -16,11 +16,13 @@ services:
     depends_on:
       - redis
       - db
+    restart: unless-stopped
 
   redis:
     image: redis:alpine
     ports:
       - "6379:6379"
+    restart: unless-stopped
 
   db:
     image: postgres:17
